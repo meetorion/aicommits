@@ -1,7 +1,6 @@
 #!/usr/bin/env zsh
 
 # Install the required Python packages
-pip install openai
 
 # Find the script file in the repository
 script_path=$(find $(pwd) -name "aicommit.py" | head -1)
@@ -25,5 +24,6 @@ echo "alias aicommit='aicommit'" >>~/.zshrc
 
 # Reload the .bashrc file
 source ~/.zshrc
+conda activate arch
 
 echo "Installation complete. You can now use the 'aicommit' command."
