@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # Install the required Python packages
 pip install openai
@@ -6,10 +6,9 @@ pip install openai
 # Find the script file in the repository
 script_path=$(find $(pwd) -name "aicommit.py" | head -1)
 
-if [ -z "$script_path" ]
-  then
-    echo "Script file not found. Please make sure the script is named 'aicommit.py' and is located in the repository."
-    exit 1
+if [ -z "$script_path" ]; then
+	echo "Script file not found. Please make sure the script is named 'aicommit.py' and is located in the repository."
+	exit 1
 fi
 
 # Copy the script file to /usr/local/bin
@@ -22,9 +21,9 @@ sudo chmod +x /usr/local/bin/aicommit
 alias aicommit="aicommit"
 
 # Add the alias to the .bashrc file
-echo "alias aicommit='aicommit'" >> ~/.bashrc
+echo "alias aicommit='aicommit'" >>~/.zshrc
 
 # Reload the .bashrc file
-source ~/.bashrc
+source ~/.zshrc
 
 echo "Installation complete. You can now use the 'aicommit' command."

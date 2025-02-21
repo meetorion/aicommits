@@ -1,41 +1,30 @@
 #!/usr/bin/python3
 import os
-import openai
 import subprocess
 
-# Read the OpenAI API key from the environment variable
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+from openai import OpenAI
 
-# Check if the API key is set
-if openai.api_key is None:
-    print("ERROR: Please set your OpenAI API key as an environment variable named 'OPENAI_API_KEY'")
-    exit(1)
+api_key = os.environ["OPENAI_API_KEY"]
+base_url = os.environ.get("OPENAI_API_ENDPOINT", "https://api.openai.com/v1")
 
-model_engine = "text-davinci-003"  # Choose the GPT-3 model you want to use
+client = OpenAI(api_key=api_key, base_url=base_url)
+client.base_url = "https://openrouter.ai/api/v1/chat"
 
-# Define the input data
-diff = subprocess.check_output(["git", "diff", "--cached"]).decode('utf-8')
+model_engine = "gpt-4o"
+
+diff = subprocess.check_output(["git", "diff", "--cached"]).decode("utf-8")
 
 while True:
-    # Generate the commit message
     prompt = f"Generate a commit message for the following changes:\n{diff}"
-    response = openai.Completion.create(
-        engine=model_engine,
-        prompt=prompt,
-        max_tokens=50,  # Adjust the max tokens and other parameters as needed
-        temperature=0.5,
-        n=1,
-        stop=None
+    response = client.completions.create(
+        model=model_engine, prompt=prompt, max_tokens=50, temperature=0.5, n=1
     )
 
     generated_text = response.choices[0].text.strip()
-
-    # Modify the commit message and present it to the user
     message = generated_text.replace("Commit message:", "").strip()
     print(f"Generated commit message:\n{message}")
     user_input = input("Accept commit message? (y/n/e): ")
 
-    # Commit the changes or regenerate the message
     if user_input.lower() == "y":
         subprocess.run(["git", "commit", "-m", message])
         print("Changes committed!")
